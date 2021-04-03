@@ -88,6 +88,18 @@ inline GestureDirection gestureDirectionFromStr(const std::string &str) {
   if (str == "OUT") {
     return GestureDirection::OUT;
   }
+  if (str == "DOWN_LEFT") {
+    return GestureDirection::DOWN_LEFT;
+  }
+  if (str == "DOWN_RIGHT") {
+    return GestureDirection::DOWN_RIGHT;
+  }
+  if (str == "UP_LEFT") {
+    return GestureDirection::UP_LEFT;
+  }
+  if (str == "UP_RIGHT") {
+    return GestureDirection::UP_RIGHT;
+  }
   return GestureDirection::UNKNOWN;
 }
 
