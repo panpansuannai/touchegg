@@ -29,6 +29,7 @@
 #include "gesture-gatherer/libinput-pinch-handler.h"
 #include "gesture-gatherer/libinput-swipe-handler.h"
 #include "gesture-gatherer/libinput-touch-handler.h"
+#include "gesture-gatherer/libinput-hold-handler.h"
 class Config;
 class GestureControllerDelegate;
 class LibinputGesture;
@@ -48,6 +49,11 @@ class LibinputGestureGatherer : public GestureGatherer {
    */
   void run() override;
 
+  /**
+   * Get next event type.
+   */
+  libinput_event_type nextEventType();
+
  private:
   /**
    * udev context.
@@ -64,6 +70,7 @@ class LibinputGestureGatherer : public GestureGatherer {
   LininputSwipeHandler swipeHandler;
   LininputPinchHandler pinchHandler;
   LibinputTouchHandler touchHandler;
+  LininputHoldHandler holdHandler;
 
   /**
    * Handles the supported libinput events.

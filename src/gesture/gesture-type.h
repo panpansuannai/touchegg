@@ -25,6 +25,7 @@ enum class GestureType {
   SWIPE = 1,
   PINCH = 2,
   TAP = 3,
+  HOLD = 4,
   // Adding a new GestureType? Don't forget to add it in gestureTypeToStr and
   // gestureTypeFromStr as well
 };
@@ -37,6 +38,8 @@ inline std::string gestureTypeToStr(GestureType gestureType) {
       return "PINCH";
     case GestureType::TAP:
       return "TAP";
+    case GestureType::HOLD:
+      return "HOLD";
     default:
       return "NOT_SUPPORTED";
   }
@@ -52,6 +55,9 @@ inline GestureType gestureTypeFromStr(const std::string &str) {
   }
   if (str == "TAP") {
     return GestureType::TAP;
+  }
+  if (str == "HOLD") {
+    return GestureType::HOLD;
   }
   return GestureType::NOT_SUPPORTED;
 }

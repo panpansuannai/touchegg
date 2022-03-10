@@ -30,6 +30,7 @@
 #include <exception>
 #include <memory>
 #include <stdexcept>
+#include <iostream>
 
 #include "config/config.h"
 #include "gesture-controller/gesture-controller-delegate.h"
@@ -43,7 +44,8 @@ LibinputGestureGatherer::LibinputGestureGatherer(
       deviceHandler(gestureController, startThreshold, finishThreshold),
       swipeHandler(gestureController),
       pinchHandler(gestureController),
-      touchHandler(gestureController) {
+      touchHandler(gestureController),
+      holdHandler(gestureController) {
   this->udevContext = udev_new();
   if (this->udevContext == nullptr) {
     throw std::runtime_error{"Error initialising Touchégg: udev"};
@@ -97,6 +99,10 @@ void LibinputGestureGatherer::run() {
   }
 }
 
+libinput_event_type LibinputGestureGatherer::nextEventType() {
+  return libinput_next_event_type(this->libinputContext);
+}
+
 void LibinputGestureGatherer::handleEvent(struct libinput_event *event) {
   libinput_event_type eventType = libinput_event_get_type(event);
   switch (eventType) {
@@ -105,22 +111,28 @@ void LibinputGestureGatherer::handleEvent(struct libinput_event *event) {
       break;
 
     case LIBINPUT_EVENT_GESTURE_SWIPE_BEGIN:
+      // std::cout << "SWIPE begin" << std::endl;
       this->swipeHandler.handleSwipeBegin(event);
       break;
     case LIBINPUT_EVENT_GESTURE_SWIPE_UPDATE:
+      // std::cout << "SWIPE update" << std::endl;
       this->swipeHandler.handleSwipeUpdate(event);
       break;
     case LIBINPUT_EVENT_GESTURE_SWIPE_END:
+      // std::cout << "SWIPE end" << std::endl;
       this->swipeHandler.handleSwipeEnd(event);
       break;
 
     case LIBINPUT_EVENT_GESTURE_PINCH_BEGIN:
+      // std::cout << "PINCH begin" << std::endl;
       this->pinchHandler.handlePinchBegin(event);
       break;
     case LIBINPUT_EVENT_GESTURE_PINCH_UPDATE:
+      // std::cout << "PINCH update" << std::endl;
       this->pinchHandler.handlePinchUpdate(event);
       break;
     case LIBINPUT_EVENT_GESTURE_PINCH_END:
+      // std::cout << "PINCH end" << std::endl;
       this->pinchHandler.handlePinchEnd(event);
       break;
 
@@ -133,6 +145,14 @@ void LibinputGestureGatherer::handleEvent(struct libinput_event *event) {
       break;
     case LIBINPUT_EVENT_TOUCH_MOTION:
       this->touchHandler.handleTouchMotion(event);
+      break;
+
+    case LIBINPUT_EVENT_GESTURE_HOLD_BEGIN:
+      this->holdHandler.handleHoldBegin(event);
+      break;
+
+    case LIBINPUT_EVENT_GESTURE_HOLD_END:
+      this->holdHandler.handleHoldEnd(event, this->nextEventType());
       break;
 
     default:
